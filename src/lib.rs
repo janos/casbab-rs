@@ -1,8 +1,5 @@
 use std::usize;
 
-#[cfg(test)]
-mod test;
-
 pub fn camel(s: &str) -> String {
     let mut w = words(s);
     camel_slice(&mut w, 1);

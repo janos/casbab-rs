@@ -1,4 +1,4 @@
-use super::*;
+use casbab;
 
 struct Case<'a> {
     input: Vec<&'a str>,
@@ -16,7 +16,7 @@ struct Case<'a> {
 }
 
 #[test]
-fn screaming_kebab_test() {
+fn casbab_test() {
     let cases = vec![
         Case {
             input: vec![
@@ -184,17 +184,17 @@ fn screaming_kebab_test() {
 
     for c in cases {
         for input in c.input {
-            assert_eq!(camel(input), c.camel);
-            assert_eq!(pascal(input), c.pascal);
-            assert_eq!(snake(input), c.snake);
-            assert_eq!(camel_snake(input), c.camel_snake);
-            assert_eq!(screaming_snake(input), c.screaming_snake);
-            assert_eq!(kebab(input), c.kebab);
-            assert_eq!(camel_kebab(input), c.camel_kebab);
-            assert_eq!(screaming_kebab(input), c.screaming_kebab);
-            assert_eq!(lower(input), c.lower);
-            assert_eq!(title(input), c.title);
-            assert_eq!(screaming(input), c.screaming);
+            assert_eq!(casbab::camel(input), c.camel);
+            assert_eq!(casbab::pascal(input), c.pascal);
+            assert_eq!(casbab::snake(input), c.snake);
+            assert_eq!(casbab::camel_snake(input), c.camel_snake);
+            assert_eq!(casbab::screaming_snake(input), c.screaming_snake);
+            assert_eq!(casbab::kebab(input), c.kebab);
+            assert_eq!(casbab::camel_kebab(input), c.camel_kebab);
+            assert_eq!(casbab::screaming_kebab(input), c.screaming_kebab);
+            assert_eq!(casbab::lower(input), c.lower);
+            assert_eq!(casbab::title(input), c.title);
+            assert_eq!(casbab::screaming(input), c.screaming);
         }
     }
 }
