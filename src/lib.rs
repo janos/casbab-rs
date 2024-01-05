@@ -121,20 +121,19 @@ fn words(s: &str) -> Vec<String> {
 }
 
 fn scream_slice(s: &mut [String]) {
-    for i in 0..s.len() {
-        s[i] = s[i].to_uppercase()
+    for e in s {
+        *e = e.to_uppercase()
     }
 }
 
 fn camel_slice(s: &mut [String], start: usize) {
-    for i in start..s.len() {
+    for e in s.iter_mut().skip(start) {
         // todo: extract match into the titlecase function without performance degradation
-        s[i] = match s[i].chars().next() {
-            None => s[i].to_owned(),
+        *e = match e.chars().next() {
+            None => e.to_owned(),
             Some(f) => {
-                let e = &mut s[i];
                 e.replace_range(..f.len_utf8(), &f.to_uppercase().to_string()[..]);
-                e.to_string()
+                e.to_owned()
             }
         };
     }
@@ -150,13 +149,11 @@ fn head_tail_count(s: &str, sub: char) -> (usize, usize) {
     }
     let mut tail: usize = 0;
     //let l = s.chars().count();
-    let mut i: usize = 0;
-    for char in s.chars().rev() {
+    for (i, char) in s.chars().rev().enumerate() {
         if char != sub {
             tail = i;
             break;
         }
-        i += 1
     }
     (head, tail)
 }
