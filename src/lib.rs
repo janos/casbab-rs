@@ -145,7 +145,6 @@ fn head_tail_count(s: &str, sub: char) -> (usize, usize) {
         }
     }
     let mut tail: usize = 0;
-    //let l = s.chars().count();
     for (i, char) in s.chars().rev().enumerate() {
         if char != sub {
             tail = i;
