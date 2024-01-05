@@ -125,15 +125,18 @@ fn scream_slice(s: &mut [String]) {
 
 fn camel_slice(s: &mut [String], start: usize) {
     for e in s.iter_mut().skip(start) {
-        // todo: extract match into the titlecase function without performance degradation
-        *e = match e.chars().next() {
-            None => e.to_owned(),
-            Some(f) => {
-                e.replace_range(..f.len_utf8(), &f.to_uppercase().to_string()[..]);
-                e.to_owned()
-            }
-        };
+        to_titlecase(e);
     }
+}
+
+fn to_titlecase(e: &mut String) {
+    *e = match e.chars().next() {
+        None => e.to_owned(),
+        Some(f) => {
+            e.replace_range(..f.len_utf8(), &f.to_uppercase().to_string()[..]);
+            e.to_owned()
+        }
+    };
 }
 
 fn head_tail_count(s: &str, sub: char) -> (usize, usize) {
