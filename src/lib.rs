@@ -171,19 +171,16 @@ fn words(s: &str) -> Vec<String> {
 
     let mut words: Vec<String> = Vec::new();
     for (i, c) in s.char_indices() {
-        match c {
-            '-' | '_' | ' ' => {
-                if start != i {
-                    words.push(s[start..i].to_lowercase());
-                };
-                start = i + 1;
-                prev_lower = false;
-                prev_upper = false;
-                prev_upper_location = 0;
-                continue;
-            }
-            _ => (),
-        };
+        if c == '-' || c == '_' || c == ' ' {
+            if start != i {
+                words.push(s[start..i].to_lowercase());
+            };
+            start = i + 1;
+            prev_lower = false;
+            prev_upper = false;
+            prev_upper_location = 0;
+            continue;
+        }
 
         if c.is_uppercase() {
             prev_upper = true;
