@@ -1,0 +1,18 @@
+[package]
+name = "casbab"
+version = "0.1.0"
+edition = "2021"
+description = "A Rust client library for converting representation style of compound words or phrases."
+license = "BSD-3-Clause"
+repository = "https://github.com/janos/casbab-rs"
+authors = ["Janos Guljas <janos@resenje.org>"]
+keywords = ["camel", "snake", "kebab", "pascal"]
+
+[dependencies]
+
+[dev-dependencies]
+criterion = "0.5.1"
+
+[[bench]]
+name = "benchmark"
+harness = false
