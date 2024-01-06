@@ -1,3 +1,8 @@
+// Copyright (c) 2024, Janoš Guljaš <janos@resenje.org>
+// All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
 use criterion::{criterion_group, criterion_main, Criterion};
 
 use casbab;
@@ -52,15 +57,15 @@ fn benchmark_screaming_kebab(c: &mut Criterion) {
     });
 }
 
-fn benchmark_title(c: &mut Criterion) {
-    c.bench_function("title", |b| {
-        b.iter(|| casbab::title(BENCHMARK_PHASE));
-    });
-}
-
 fn benchmark_lower(c: &mut Criterion) {
     c.bench_function("lower", |b| {
         b.iter(|| casbab::lower(BENCHMARK_PHASE));
+    });
+}
+
+fn benchmark_title(c: &mut Criterion) {
+    c.bench_function("title", |b| {
+        b.iter(|| casbab::title(BENCHMARK_PHASE));
     });
 }
 
@@ -80,8 +85,8 @@ criterion_group!(
     benchmark_kebab,
     benchmark_camel_kebab,
     benchmark_screaming_kebab,
-    benchmark_title,
     benchmark_lower,
+    benchmark_title,
     benchmark_screaming,
 );
 criterion_main!(benches);
