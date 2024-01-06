@@ -2,7 +2,7 @@
 
 [![Rust](https://github.com/janos/casbab-rs/actions/workflows/rust.yml/badge.svg)](https://github.com/janos/casbab-rs/actions/workflows/rust.yml)
 [![Crate](https://img.shields.io/crates/v/casbab.svg)](https://crates.io/crates/casbab)
-[![Docs](https://docs.rs/casbsb/badge.svg)](https://docs.rs/casbsb)
+[![Docs](https://docs.rs/casbab/badge.svg)](https://docs.rs/casbab)
 
 Package casbab is a rust library for converting representation style of compound words or phrases. Different writing styles of compound words are used for different purposes in computer code and variables to easily distinguish type, properties or meaning.
 
