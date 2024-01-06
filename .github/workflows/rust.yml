@@ -53,5 +53,8 @@ jobs:
       - name: Build
         run: cargo build --verbose
 
+      - name: Build binary
+        run: cargo build --features build-binary --verbose
+
       - name: Run tests
         run: cargo test --verbose
