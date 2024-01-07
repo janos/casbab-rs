@@ -8,7 +8,7 @@ use clap::{arg, error::ErrorKind, Command};
 use std::io;
 
 fn main() {
-    let cmd = Command::new("casbab")
+    let mut cmd = Command::new("casbab")
         .about("Camel Snake Kebab (https://github.com/janos/casbab-rs)")
         .disable_version_flag(true)
         .arg_required_else_help(true)
@@ -55,8 +55,7 @@ Stdin as the new-line separated list.
         "title " => casbab::title,
         "screaming" => casbab::screaming,
         _ => {
-            cmd.clone()
-                .error(ErrorKind::InvalidSubcommand, "Invalid dialect")
+            cmd.error(ErrorKind::InvalidSubcommand, "Invalid dialect")
                 .exit();
         }
     };
@@ -64,12 +63,11 @@ Stdin as the new-line separated list.
     let phrases: Vec<String> = match matches.get_many("phrases") {
         None => {
             if atty::is(Stream::Stdin) {
-                cmd.clone()
-                    .error(
-                        ErrorKind::InvalidValue,
-                        "Missing phases either from arguments or stdin",
-                    )
-                    .exit();
+                cmd.error(
+                    ErrorKind::InvalidValue,
+                    "Missing phases either from arguments or stdin",
+                )
+                .exit();
             }
             let mut phrases: Vec<String> = Vec::new();
             for line in io::stdin().lines() {
