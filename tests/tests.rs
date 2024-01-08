@@ -178,7 +178,7 @@ fn casbab_test() {
             screaming: "ОВО ЈЕ BRAVE NEW СВЕТ".to_string(),
         },
         Case {
-            input: vec!["".to_string()],
+            input: vec!["".to_string(), " ".to_string(), "     ".to_string()],
             camel: "".to_string(),
             pascal: "".to_string(),
             snake: "".to_string(),

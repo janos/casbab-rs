@@ -40,7 +40,7 @@
 //! - `snake("--camel-snake-kebab")` returns `camel_snake_kebab`
 //! - `screaming("--camel-snake-kebab")` returns `CAMEL SNAKE KEBAB`
 
-use std::usize;
+use std::{fmt::Write, usize};
 
 /// *Camel* case is the practice of writing compound words
 /// or phrases such that each word or abbreviation in the
@@ -49,9 +49,7 @@ use std::usize;
 ///
 /// Example: `camelSnakeKebab`.
 pub fn camel(s: &str) -> String {
-    let mut w = words(s);
-    camel_slice(&mut w, 1);
-    w.join("")
+    casbab(s, to_titlecase, to_lowercase)
 }
 
 /// *Pascal* case is a variant of Camel case writing where
@@ -59,9 +57,7 @@ pub fn camel(s: &str) -> String {
 ///
 /// Example: `CamelSnakeKebab`.
 pub fn pascal(s: &str) -> String {
-    let mut w = words(s);
-    camel_slice(&mut w, 0);
-    w.join("")
+    casbab(s, to_titlecase, to_titlecase)
 }
 
 /// *Snake* case is the practice of writing compound words
@@ -71,8 +67,7 @@ pub fn pascal(s: &str) -> String {
 ///
 /// Example: `camel_snake_kebab`.
 pub fn snake(s: &str) -> String {
-    let (head, tail) = head_tail_count(s, '_');
-    "_".repeat(head) + words(s).join("_").as_str() + "_".repeat(tail).as_str()
+    casbab_wrap(s, '_', to_lowercase)
 }
 
 /// *Camel snake* case is a variant of Camel case with
@@ -80,10 +75,7 @@ pub fn snake(s: &str) -> String {
 ///
 /// Example: `Camel_Snake_Kebab`.
 pub fn camel_snake(s: &str) -> String {
-    let (head, tail) = head_tail_count(s, '_');
-    let mut w = words(s);
-    camel_slice(&mut w, 0);
-    "_".repeat(head) + w.join("_").as_str() + "_".repeat(tail).as_str()
+    casbab_wrap(s, '_', to_titlecase)
 }
 
 /// *Screaming snake* case is a variant of Camel case with
@@ -91,10 +83,7 @@ pub fn camel_snake(s: &str) -> String {
 ///
 /// Example: `CAMEL_SNAKE_KEBAB`.
 pub fn screaming_snake(s: &str) -> String {
-    let (head, tail) = head_tail_count(s, '_');
-    let mut w = words(s);
-    scream_slice(&mut w);
-    "_".repeat(head) + w.join("_").as_str() + "_".repeat(tail).as_str()
+    casbab_wrap(s, '_', to_uppercase)
 }
 
 /// *Kebab* case is the practice of writing compound words
@@ -104,8 +93,7 @@ pub fn screaming_snake(s: &str) -> String {
 ///
 /// Example: `camel-snake-kebab`.
 pub fn kebab(s: &str) -> String {
-    let (head, tail) = head_tail_count(s, '-');
-    "-".repeat(head) + words(s).join("-").as_str() + "-".repeat(tail).as_str()
+    casbab_wrap(s, '-', to_lowercase)
 }
 
 /// *Camel kebab* case is a variant of Kebab case with
@@ -113,10 +101,7 @@ pub fn kebab(s: &str) -> String {
 ///
 /// Example: `Camel-Snake-Kebab`.
 pub fn camel_kebab(s: &str) -> String {
-    let (head, tail) = head_tail_count(s, '-');
-    let mut w = words(s);
-    camel_slice(&mut w, 0);
-    "-".repeat(head) + w.join("-").as_str() + "-".repeat(tail).as_str()
+    casbab_wrap(s, '-', to_titlecase)
 }
 
 /// *Screaming kebab* case is a variant of Kebab case with
@@ -124,10 +109,7 @@ pub fn camel_kebab(s: &str) -> String {
 ///
 /// Example: `CAMEL-SNAKE-KEBAB`.
 pub fn screaming_kebab(s: &str) -> String {
-    let (head, tail) = head_tail_count(s, '-');
-    let mut w = words(s);
-    scream_slice(&mut w);
-    "-".repeat(head) + w.join("-").as_str() + "-".repeat(tail).as_str()
+    casbab_wrap(s, '-', to_uppercase)
 }
 
 /// *Lower* is returning detected words, not in a compound
@@ -136,7 +118,7 @@ pub fn screaming_kebab(s: &str) -> String {
 ///
 /// Example: `camel snake kebab`.
 pub fn lower(s: &str) -> String {
-    words(s).join(" ")
+    casbab_separate(s, ' ', to_lowercase)
 }
 
 /// *Title* is returning detected words, not in a compound
@@ -146,9 +128,7 @@ pub fn lower(s: &str) -> String {
 ///
 /// Example: `Camel Snake Kebab`.
 pub fn title(s: &str) -> String {
-    let mut w = words(s);
-    camel_slice(&mut w, 0);
-    w.join(" ")
+    casbab_separate(s, ' ', to_titlecase)
 }
 
 /// *Screaming* is returning detected words, not in a compound
@@ -157,23 +137,96 @@ pub fn title(s: &str) -> String {
 ///
 /// Example: `CAMEL SNAKE KEBAB`.
 pub fn screaming(s: &str) -> String {
-    let mut w = words(s);
-    scream_slice(&mut w);
-    w.join(" ")
+    casbab_separate(s, ' ', to_uppercase)
 }
 
-fn words(s: &str) -> Vec<String> {
+fn casbab(
+    s: &str,
+    transform: fn(&str) -> String,
+    transform_first_word: fn(&str) -> String,
+) -> String {
+    let mut r = String::new();
+    let mut s = s;
+    let (w, rest) = first_word(s);
+    r += &transform_first_word(w);
+    s = rest;
+    loop {
+        let (w, rest) = first_word(s);
+        if w.is_empty() {
+            break r;
+        }
+        r += &transform(w);
+        if rest.is_empty() {
+            break r;
+        }
+        s = rest;
+    }
+}
+
+fn casbab_separate(s: &str, separator: char, transform: fn(&str) -> String) -> String {
+    let mut r = String::new();
+    let mut s = s;
+    let (w, rest) = first_word(s);
+    r += &transform(w);
+    s = rest;
+    loop {
+        let (w, rest) = first_word(s);
+        if w.is_empty() {
+            break r;
+        }
+        _ = r.write_char(separator);
+        r += &transform(w);
+        if rest.is_empty() {
+            break r;
+        }
+        s = rest;
+    }
+}
+
+fn casbab_wrap(s: &str, separator: char, transform: fn(&str) -> String) -> String {
+    let mut r = String::new();
+
+    let (head, tail) = head_tail_count(s, separator);
+
+    for _ in 0..head {
+        _ = r.write_char(separator);
+    }
+
+    let mut s = s;
+    let (w, rest) = first_word(s);
+    r += &transform(w);
+    s = rest;
+    loop {
+        let (w, rest) = first_word(s);
+        if w.is_empty() {
+            break;
+        }
+        _ = r.write_char(separator);
+        r += &transform(w);
+        if rest.is_empty() {
+            break;
+        }
+        s = rest;
+    }
+
+    for _ in 0..tail {
+        _ = r.write_char(separator);
+    }
+
+    r
+}
+
+fn first_word(s: &str) -> (&str, &str) {
     let mut start: usize = 0;
     let l = s.len();
     let mut prev_lower = false;
     let mut prev_upper = false;
     let mut prev_upper_location: usize = 0;
 
-    let mut words: Vec<String> = Vec::new();
     for (i, c) in s.char_indices() {
         if c == '-' || c == '_' || c == ' ' {
             if start != i {
-                words.push(s[start..i].to_lowercase());
+                return (&s[start..i], &s[i..]);
             };
             start = i + 1;
             prev_lower = false;
@@ -187,7 +240,7 @@ fn words(s: &str) -> Vec<String> {
             prev_upper_location = i;
             if prev_lower {
                 if start != i {
-                    words.push(s[start..i].to_lowercase())
+                    return (&s[start..i], &s[i..]);
                 }
                 start = i;
                 prev_lower = false;
@@ -196,7 +249,7 @@ fn words(s: &str) -> Vec<String> {
             prev_lower = true;
             if prev_upper && prev_upper_location > 0 {
                 if start != prev_upper_location {
-                    words.push(s[start..prev_upper_location].to_lowercase())
+                    return (&s[start..prev_upper_location], &s[prev_upper_location..]);
                 }
                 start = prev_upper_location;
                 prev_upper = false;
@@ -205,31 +258,24 @@ fn words(s: &str) -> Vec<String> {
         }
     }
     if start != l {
-        words.push(s[start..].to_lowercase());
+        return (&s[start..], "");
     }
-    words
+    ("", "")
 }
 
-fn scream_slice(s: &mut [String]) {
-    for e in s {
-        *e = e.to_uppercase()
-    }
+fn to_lowercase(s: &str) -> String {
+    s.to_lowercase()
+}
+fn to_uppercase(s: &str) -> String {
+    s.to_uppercase()
 }
 
-fn camel_slice(s: &mut [String], start: usize) {
-    for e in s.iter_mut().skip(start) {
-        to_titlecase(e);
+fn to_titlecase(s: &str) -> String {
+    let mut chars = s.chars();
+    match chars.next() {
+        None => s.to_string(),
+        Some(f) => f.to_uppercase().to_string() + &chars.as_str().to_lowercase(),
     }
-}
-
-fn to_titlecase(e: &mut String) {
-    *e = match e.chars().next() {
-        None => e.to_owned(),
-        Some(f) => {
-            e.replace_range(..f.len_utf8(), &f.to_uppercase().to_string()[..]);
-            e.to_owned()
-        }
-    };
 }
 
 fn head_tail_count(s: &str, sub: char) -> (usize, usize) {
