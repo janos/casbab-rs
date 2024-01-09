@@ -1,6 +1,6 @@
 [package]
 name = "casbab"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "A Rust client library for converting representation style of compound words or phrases."
 license = "BSD-3-Clause"
