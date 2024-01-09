@@ -9,6 +9,8 @@ authors = ["Janos Guljas <janos@resenje.org>"]
 keywords = ["camel", "snake", "kebab", "pascal"]
 
 [dependencies]
+atty = { version = "0.2.14", optional = true }
+clap = { version = "4.4.13", optional = true }
 
 [dev-dependencies]
 criterion = "0.5.1"
@@ -16,3 +18,13 @@ criterion = "0.5.1"
 [[bench]]
 name = "benchmark"
 harness = false
+
+[lib]
+name = "casbab"
+
+[features]
+build-binary = ["atty", "clap"]
+
+[[bin]]
+name = "casbab"
+required-features = ["build-binary"]

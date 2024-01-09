@@ -50,6 +50,29 @@ title                   time:   [877.86 ns 884.77 ns 891.13 ns]
 screaming               time:   [560.80 ns 563.78 ns 566.98 ns]
 ```
 
+## CLI
+
+Build:
+
+```sh
+cargo install casbab --features build-binary
+```
+
+Get help:
+
+```sh
+casbab -h
+```
+
+Examples:
+
+```sh
+casbab screaming-snake "it is what it is"
+casbab kebab my_snake_string some_kinda_Snake
+echo "DO NOT SCREAM PLEASE" | casbab lower
+cat variables.txt | casbab camel
+```
+
 ## Versioning
 
 Each version of the client is tagged and the version is updated accordingly.
